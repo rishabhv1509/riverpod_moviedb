@@ -1,12 +1,11 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ApiCall {
+class ApiService {
   String apiKey = '9e9d99a2';
   String baseUrl = 'https://www.omdbapi.com/';
-  Future getMovieData(String movie) async {
+  getMovieData(String movie) async {
     try {
-      Response result = await Dio()
+      var result = await Dio()
           .get(baseUrl, queryParameters: {'t': movie, 'apikey': apiKey});
       return result.data;
     } catch (e) {
@@ -14,5 +13,3 @@ class ApiCall {
     }
   }
 }
-
-final apiCallProvider = Provider<ApiCall>((ref) => ApiCall());

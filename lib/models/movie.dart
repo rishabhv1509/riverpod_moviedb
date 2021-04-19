@@ -1,30 +1,47 @@
-class Movie {
-  String title;
-  String year;
-  String rated;
-  String released;
-  String runtime;
-  String genre;
-  String director;
-  String writer;
-  String actors;
-  String plot;
-  String language;
-  String country;
-  String awards;
-  String poster;
-  List<Ratings> ratings;
-  String metascore;
-  String imdbRating;
-  String imdbVotes;
-  String imdbID;
-  String type;
-  String dVD;
-  String boxOffice;
-  String production;
-  String website;
-  String response;
+import 'package:hive/hive.dart';
+import 'package:riverpod_moviedb/models/ratings.dart';
+part 'movie.g.dart';
 
+@HiveType(typeId: 0)
+class Movie {
+  @HiveField(0)
+  String title;
+  @HiveField(1)
+  String year;
+  @HiveField(2)
+  String rated;
+  @HiveField(3)
+  String released;
+  @HiveField(4)
+  String runtime;
+  @HiveField(5)
+  String genre;
+  @HiveField(6)
+  String director;
+  @HiveField(7)
+  String writer;
+  @HiveField(8)
+  String actors;
+  @HiveField(9)
+  String plot;
+  @HiveField(10)
+  String language;
+  @HiveField(11)
+  String country;
+
+  @HiveField(12)
+  String poster;
+  @HiveField(13)
+  List<Ratings> ratings;
+
+  @HiveField(14)
+  String imdbRating;
+
+  @HiveField(15)
+  String type;
+  @HiveField(16)
+  String response;
+// }
   Movie(
       {this.title,
       this.year,
@@ -38,18 +55,10 @@ class Movie {
       this.plot,
       this.language,
       this.country,
-      this.awards,
       this.poster,
       this.ratings,
-      this.metascore,
       this.imdbRating,
-      this.imdbVotes,
-      this.imdbID,
       this.type,
-      this.dVD,
-      this.boxOffice,
-      this.production,
-      this.website,
       this.response});
 
   Movie.fromJson(Map<String, dynamic> json) {
@@ -65,7 +74,7 @@ class Movie {
     plot = json['Plot'];
     language = json['Language'];
     country = json['Country'];
-    awards = json['Awards'];
+
     poster = json['Poster'];
     if (json['Ratings'] != null) {
       ratings = <Ratings>[];
@@ -73,15 +82,8 @@ class Movie {
         ratings.add(Ratings.fromJson(v));
       });
     }
-    metascore = json['Metascore'];
-    imdbRating = json['imdbRating'];
-    imdbVotes = json['imdbVotes'];
-    imdbID = json['imdbID'];
+
     type = json['Type'];
-    dVD = json['DVD'];
-    boxOffice = json['BoxOffice'];
-    production = json['Production'];
-    website = json['Website'];
     response = json['Response'];
   }
 
@@ -99,40 +101,15 @@ class Movie {
     data['Plot'] = this.plot;
     data['Language'] = this.language;
     data['Country'] = this.country;
-    data['Awards'] = this.awards;
+
     data['Poster'] = this.poster;
     if (this.ratings != null) {
       data['Ratings'] = this.ratings.map((v) => v.toJson()).toList();
     }
-    data['Metascore'] = this.metascore;
-    data['imdbRating'] = this.imdbRating;
-    data['imdbVotes'] = this.imdbVotes;
-    data['imdbID'] = this.imdbID;
+
     data['Type'] = this.type;
-    data['DVD'] = this.dVD;
-    data['BoxOffice'] = this.boxOffice;
-    data['Production'] = this.production;
-    data['Website'] = this.website;
     data['Response'] = this.response;
-    return data;
-  }
-}
 
-class Ratings {
-  String source;
-  String value;
-
-  Ratings({this.source, this.value});
-
-  Ratings.fromJson(Map<String, dynamic> json) {
-    source = json['Source'];
-    value = json['Value'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['Source'] = this.source;
-    data['Value'] = this.value;
     return data;
   }
 }
