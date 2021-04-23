@@ -1,8 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:riverpod_moviedb/data/api_calls.dart';
 import 'package:riverpod_moviedb/models/movie.dart';
-import 'package:riverpod_moviedb/size_onfig.dart';
+import 'package:riverpod_moviedb/screens/movie_details/movie_details.dart';
+import 'package:riverpod_moviedb/service/api_service.dart';
+import 'package:riverpod_moviedb/size_config.dart';
 
 class CustomCard extends StatefulWidget {
   final List<Movie> movies;
@@ -27,19 +28,19 @@ class _CustomCardState extends State<CustomCard> {
   }
 
   ini() async {
-    var test = await ApiCall().getMovieData('batman');
+    var test = await ApiService().getMovieData('batman');
     Movie m = Movie.fromJson(test);
     widget.movies.add(m);
-    test = await ApiCall().getMovieData('superman');
+    test = await ApiService().getMovieData('superman');
     m = Movie.fromJson(test);
     widget.movies.add(m);
-    test = await ApiCall().getMovieData('spiderman');
+    test = await ApiService().getMovieData('spiderman');
     m = Movie.fromJson(test);
     widget.movies.add(m);
     setState(() {});
   }
 
-  final SizeScaleConfig scaleConfig = SizeScaleConfig();
+  final SizeConfig scaleConfig = SizeConfig();
   @override
   Widget build(BuildContext context) {
     return CarouselSlider(
@@ -109,6 +110,12 @@ class _CustomCardState extends State<CustomCard> {
                               //     movieOverview: item.overview ?? "",
                               //   ),
                               // );
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MovieDetails(
+                                            movie: item,
+                                          )));
                             }
                           },
                           child: child,

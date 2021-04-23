@@ -9,36 +9,32 @@ class HomeScreenProvider extends StateNotifier<AsyncValue<List<Movie>>> {
     _init();
   }
   _init() async {
-    // try {
-    AsyncLoading();
-    await fetchRecents();
-    AsyncData(recentsList);
-    // } catch (e) {
-    //   print('IN INIT OF HOME SCREEN PROVIDER');
-    // }
+    try {
+      state = AsyncLoading();
+      await fetchRecents();
+      state = AsyncData(recentsList);
+    } catch (e) {
+      print('IN INIT OF HOME SCREEN PROVIDER');
+    }
   }
 
   List<Movie> recentsList = [];
   fetchRecents() async {
-    // HiveService().initHive();
-    AsyncLoading();
-    // try {
-    var dbList = await HiveService()
-        .readData(Contants.RECENTS_BOX, Contants.RECENTS_KEY);
+    state = AsyncLoading();
+    try {
+      var dbList = await HiveService()
+          .readData(Contants.RECENTS_BOX, Contants.RECENTS_KEY);
 
-    if (dbList == null) {
-      recentsList = [];
-    } else {
-      // dbList.forEach((element) {
-      //   recentsList.add(element);
-      // });
-      recentsList = List.from(dbList);
+      if (dbList == null) {
+        recentsList = [];
+      } else {
+        recentsList = List.from(dbList);
+      }
+
+      state = AsyncData(recentsList);
+    } catch (e) {
+      print('ERROR in fetching llist');
     }
-    // recentsList.forEach((element) => print);
-    AsyncData(recentsList);
-    // } catch (e) {
-    //   print('ERROR in fetching llist');
-    // }
   }
 
   setRecents(Movie movie) async {
@@ -47,8 +43,10 @@ class HomeScreenProvider extends StateNotifier<AsyncValue<List<Movie>>> {
       if (recentsList.length < 10) {
         recentsList.add(movie);
       } else {
-        recentsList.removeAt(0);
-        recentsList.add(movie);
+        if (!recentsList.contains(movie)) {
+          recentsList.removeAt(0);
+          recentsList.add(movie);
+        }
       }
 
       await HiveService()
@@ -59,10 +57,11 @@ class HomeScreenProvider extends StateNotifier<AsyncValue<List<Movie>>> {
     }
   }
 
+  Movie movie;
   getMovieData(String movieName) async {
     var response = await ApiService().getMovieData(movieName);
     if (response['Response'] == 'True') {
-      Movie movie = Movie.fromJson(response);
+      movie = Movie.fromJson(response);
       setRecents(movie);
     }
   }

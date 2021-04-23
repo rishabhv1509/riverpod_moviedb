@@ -7,6 +7,9 @@ final movieProvider =
     StateNotifierProvider.autoDispose<MovieProvider, AsyncValue<Movie>>(
         (ref) => MovieProvider());
 
-final homeScreenProvider =
+final homeScreenStateProvider =
     StateNotifierProvider<HomeScreenProvider, AsyncValue<List<Movie>>>(
         (ref) => HomeScreenProvider());
+
+final homeScreenProvider =
+    StateProvider<HomeScreenProvider>((ref) => HomeScreenProvider());

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class SizeScaleConfig {
+class SizeConfig {
   final double baseHeight = 960.0;
   final double baseWidth = 454.7368421052632;
 

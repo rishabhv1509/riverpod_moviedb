@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_moviedb/data/api_calls.dart';
 import 'package:riverpod_moviedb/models/movie.dart';
+import 'package:riverpod_moviedb/service/api_service.dart';
 import 'package:state_notifier/state_notifier.dart';
 
 class MovieProvider extends StateNotifier<AsyncValue<Movie>> {
@@ -8,7 +8,7 @@ class MovieProvider extends StateNotifier<AsyncValue<Movie>> {
   fetchMovie(String movieName) async {
     try {
       state = AsyncLoading();
-      var result = await ApiCall().getMovieData(movieName);
+      var result = await ApiService().getMovieData(movieName);
 
       Movie movie = Movie.fromJson((result));
       state = AsyncData(movie);

@@ -23,19 +23,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  carousel_slider: ^3.0.0
   cupertino_icons: ^1.0.2
   dio: ^4.0.0
   flutter_riverpod: ^0.14.0
+  google_fonts: ^2.0.0
   hive: ^2.0.3
   hive_flutter: ^1.0.0
-  carousel_slider: ^3.0.0
-  # hive: ^1.4.4+1
-  # hive_flutter: ^0.3.1
 dev_dependencies:
-  hive_generator: ^1.0.0
-  build_runner: ^1.11.5
   flutter_test:
     sdk: flutter
+  build_runner: ^1.11.5
+  hive_generator: ^1.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -58,10 +57,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: Orelega One
+      fonts:
+        - asset: assets/fonts/OrelegaOne-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

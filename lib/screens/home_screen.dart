@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_moviedb/providers/providers.dart';
 import 'package:riverpod_moviedb/screens/common_widgets/custom_card.dart';
-import 'package:riverpod_moviedb/size_onfig.dart';
+import 'package:riverpod_moviedb/screens/movie_details/movie_details.dart';
+import 'package:riverpod_moviedb/size_config.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -14,7 +15,8 @@ class _HomeScreenState extends State<HomeScreen> {
   TextEditingController _searchController = TextEditingController();
   @override
   void didChangeDependencies() {
-    SizeScaleConfig().calculateScaleRatios(context);
+    SizeConfig().calculateScaleRatios(context);
+    context.read(homeScreenStateProvider.notifier).fetchRecents();
     super.didChangeDependencies();
   }
 
@@ -45,10 +47,25 @@ class _HomeScreenState extends State<HomeScreen> {
                           Icons.arrow_forward,
                           color: Colors.black,
                         ),
-                        onPressed: () {
-                          context
-                              .read(homeScreenProvider.notifier)
+                        onPressed: () async {
+                          await context
+                              .read(homeScreenStateProvider.notifier)
                               .getMovieData(_searchController.text);
+                          if (context
+                                  .read(homeScreenStateProvider.notifier)
+                                  .movie
+                                  .response ==
+                              'True') {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MovieDetails(
+                                    movie: context
+                                        .read(homeScreenStateProvider.notifier)
+                                        .movie),
+                              ),
+                            );
+                          }
                         })
                   ],
                 ),
@@ -91,18 +108,20 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               SizedBox(height: 20),
               Consumer(builder: (context, watch, _) {
-                return watch(homeScreenProvider).when(
-                    data: (data) => Column(
-                          children: [
-                            (data.isEmpty)
-                                ? Center(
-                                    child: Text('Search movies'),
-                                  )
-                                : CustomCard(
-                                    movies: data,
-                                  ),
-                          ],
-                        ),
+                return watch(homeScreenStateProvider).when(
+                    data: (data) {
+                      return Column(
+                        children: [
+                          (data.isEmpty)
+                              ? Center(
+                                  child: Text('Search movies'),
+                                )
+                              : CustomCard(
+                                  movies: data,
+                                ),
+                        ],
+                      );
+                    },
                     loading: () => Container(),
                     error: (e, s) => Container());
               }),

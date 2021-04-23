@@ -28,15 +28,12 @@ class Movie {
   String language;
   @HiveField(11)
   String country;
-
   @HiveField(12)
   String poster;
   @HiveField(13)
   List<Ratings> ratings;
-
   @HiveField(14)
   String imdbRating;
-
   @HiveField(15)
   String type;
   @HiveField(16)
@@ -74,7 +71,7 @@ class Movie {
     plot = json['Plot'];
     language = json['Language'];
     country = json['Country'];
-
+    imdbRating = json['imdbRating'];
     poster = json['Poster'];
     if (json['Ratings'] != null) {
       ratings = <Ratings>[];
@@ -101,8 +98,8 @@ class Movie {
     data['Plot'] = this.plot;
     data['Language'] = this.language;
     data['Country'] = this.country;
-
     data['Poster'] = this.poster;
+    data['imdbRating'] = this.imdbRating;
     if (this.ratings != null) {
       data['Ratings'] = this.ratings.map((v) => v.toJson()).toList();
     }
