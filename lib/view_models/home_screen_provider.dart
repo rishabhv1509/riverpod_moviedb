@@ -41,9 +41,15 @@ class HomeScreenProvider extends StateNotifier<AsyncValue<List<Movie>>> {
     try {
       fetchRecents();
       if (recentsList.length < 10) {
-        recentsList.add(movie);
+        int index =
+            recentsList.indexWhere((element) => element.title == movie.title);
+        if (index == -1) {
+          recentsList.add(movie);
+        }
       } else {
-        if (!recentsList.contains(movie)) {
+        int index =
+            recentsList.indexWhere((element) => element.title == movie.title);
+        if (index == -1) {
           recentsList.removeAt(0);
           recentsList.add(movie);
         }
