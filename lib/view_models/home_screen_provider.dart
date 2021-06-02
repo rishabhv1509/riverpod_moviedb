@@ -64,11 +64,15 @@ class HomeScreenProvider extends StateNotifier<AsyncValue<List<Movie>>> {
   }
 
   Movie movie;
+  bool isResponseTrue = false;
   getMovieData(String movieName) async {
     var response = await ApiService().getMovieData(movieName);
     if (response['Response'] == 'True') {
+      isResponseTrue = true;
       movie = Movie.fromJson(response);
       setRecents(movie);
+    } else {
+      isResponseTrue = false;
     }
   }
 }

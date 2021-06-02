@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_moviedb/providers/providers.dart';
-import 'package:riverpod_moviedb/screens/common_widgets/custom_card.dart';
 import 'package:riverpod_moviedb/screens/movie_details/movie_details.dart';
 import 'package:riverpod_moviedb/size_config.dart';
 
@@ -11,12 +10,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool isOpen = false;
-  TextEditingController _searchController = TextEditingController();
+  TextEditingController movieController = TextEditingController();
+  @override
+  void dispose() {
+    movieController.dispose();
+    super.dispose();
+  }
+
   @override
   void didChangeDependencies() {
     SizeConfig().calculateScaleRatios(context);
-    context.read(homeScreenStateProvider.notifier).fetchRecents();
+
     super.didChangeDependencies();
   }
 
@@ -25,109 +29,74 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        title: (isOpen)
-            ? Container(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                        child: TextFormField(
-                          controller: _searchController,
-                          decoration: InputDecoration.collapsed(
-                              hintText: 'Search movies...'),
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                        icon: Icon(
-                          Icons.arrow_forward,
-                          color: Colors.black,
-                        ),
-                        onPressed: () async {
-                          await context
-                              .read(homeScreenStateProvider.notifier)
-                              .getMovieData(_searchController.text);
-                          if (context
-                                  .read(homeScreenStateProvider.notifier)
-                                  .movie
-                                  .response ==
-                              'True') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => MovieDetails(
-                                    movie: context
-                                        .read(homeScreenStateProvider.notifier)
-                                        .movie),
-                              ),
-                            );
-                          }
-                        })
-                  ],
-                ),
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(10)),
-              )
-            : Text(
-                'Movies App',
-                style: TextStyle(color: Colors.black),
-              ),
-        elevation: 0,
-        actions: [
-          IconButton(
-              icon: Icon(
-                Icons.search,
-                color: Colors.black,
-              ),
-              onPressed: () {
-                setState(() {
-                  isOpen = !isOpen;
-                });
-              })
-        ],
+        title: Text('Riverpod OMDB'),
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                      child: Text(
-                    'Recents',
-                    style: TextStyle(color: Colors.black, fontSize: 35),
-                  ))
-                ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              height: 50,
+              width: 300,
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.circular(10)),
+              child: Center(
+                child: TextField(
+                  controller: movieController,
+                  decoration: InputDecoration.collapsed(hintText: 'hintText'),
+                ),
               ),
-              SizedBox(height: 20),
-              Consumer(builder: (context, watch, _) {
-                return watch(homeScreenStateProvider).when(
-                    data: (data) {
-                      return Column(
-                        children: [
-                          (data.isEmpty)
-                              ? Center(
-                                  child: Text('Search movies'),
-                                )
-                              : CustomCard(
-                                  movies: data,
-                                ),
+            ),
+            Consumer(builder: (context, watch, _) {
+              return watch(movieProvider).when(
+                  data: (movie) {
+                    return movie == null
+                        ? Center(
+                            child:
+                                Text('Please search for a movie or try again'),
+                          )
+                        : Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Container(
+                                    color: Colors.black,
+                                    height: 700,
+                                    child: MovieDetails(movie: movie)),
+                              )
+                            ],
+                          );
+                  },
+                  loading: () {
+                    return CircularProgressIndicator();
+                  },
+                  error: (error, r) => AlertDialog(
+                        content: Text('Something went wrong'),
+                        actions: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('Ok')),
+                            ],
+                          )
                         ],
-                      );
-                    },
-                    loading: () => Container(),
-                    error: (e, s) => Container());
-              }),
-            ],
-          ),
+                      ));
+            }),
+          ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          context.read(movieProvider.notifier).fetchMovie(movieController.text);
+        },
+        tooltip: 'Increment',
+        child: Icon(Icons.search),
       ),
     );
   }

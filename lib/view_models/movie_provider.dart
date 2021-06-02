@@ -5,12 +5,18 @@ import 'package:state_notifier/state_notifier.dart';
 
 class MovieProvider extends StateNotifier<AsyncValue<Movie>> {
   MovieProvider() : super(AsyncData(null));
+  Movie movie;
+
   fetchMovie(String movieName) async {
     try {
       state = AsyncLoading();
       var result = await ApiService().getMovieData(movieName);
 
-      Movie movie = Movie.fromJson((result));
+      if (result['Response'] == 'True') {
+        movie = Movie.fromJson(result);
+      } else {
+        movie = null;
+      }
       state = AsyncData(movie);
     } catch (e) {
       print('ERROR in fetching movie ');
